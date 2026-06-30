@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authorization Callback - JLPT Vocab Shorts</title>
+<style>
+  body { font-family: -apple-system, "Hiragino Sans", sans-serif; line-height: 1.7;
+         max-width: 640px; margin: 40px auto; padding: 0 20px; color: #222; }
+  h1 { font-size: 1.4rem; }
+  textarea { width: 100%; height: 90px; font-family: monospace; font-size: 1rem; padding: 8px; }
+  button { margin-top: 10px; padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+  .ok { color: #137333; } .err { color: #c5221f; } .muted { color: #666; }
+</style>
+</head>
+<body>
+<h1>認証コード / Authorization code</h1>
+<p class="muted">下の <strong>code</strong> をコピーして、ターミナルの認証スクリプトに貼り付けてください。<br>
+Copy the <strong>code</strong> below and paste it into the auth script in your terminal.</p>
+
+<textarea id="code" readonly></textarea>
+<div><button id="copy">コピー / Copy</button> <span id="msg"></span></div>
+
+<p class="muted" style="margin-top:2rem">このページはあなたの GitHub Pages 上の静的ページです。コードはサーバーに送信されません。<br>
+This is a static page on your GitHub Pages. The code is not sent anywhere.</p>
+
+<script>
+  var params = new URLSearchParams(window.location.search);
+  var code = params.get("code") || "";
+  var err = params.get("error") || params.get("error_description") || "";
+  var ta = document.getElementById("code");
+  var msg = document.getElementById("msg");
+  if (code) {
+    ta.value = code;
+    msg.textContent = "code を取得しました。";
+    msg.className = "ok";
+  } else {
+    ta.value = err ? ("エラー: " + err) : "code が見つかりません。認可をやり直してください。";
+    msg.textContent = err ? "認可に失敗しました。" : "";
+    msg.className = "err";
+  }
+  document.getElementById("copy").addEventListener("click", function () {
+    ta.select();
+    navigator.clipboard.writeText(ta.value).then(function () {
+      msg.textContent = "コピーしました / Copied"; msg.className = "ok";
+    }, function () {
+      document.execCommand("copy");
+      msg.textContent = "コピーしました / Copied"; msg.className = "ok";
+    });
+  });
+</script>
+</body>
+</html>
